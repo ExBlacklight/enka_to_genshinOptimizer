@@ -2,9 +2,9 @@
 
 A Python utility that converts Genshin Impact character data from Enka.Network API into a json file that fits in Genshin Impact optimizer.
 
-Genshin Impact Optimizer: [text](https://frzyc.github.io/genshin-optimizer/#/)
+[* Genshin Impact Optimizer *](https://frzyc.github.io/genshin-optimizer/#/)
 
-enka network: [text](https://enka.network/)
+[* enka network *](https://enka.network/)
 
 
 ## Prerequisites
