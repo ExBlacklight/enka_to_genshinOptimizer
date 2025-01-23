@@ -46,7 +46,7 @@ def weapon_maker(avatarInfoItem, weapon_bridge, char_bridge):
     weapon_info = equip_list[ind]
     result["key"] = weapon_bridge[weapon_info['flat']['nameTextMapHash']]
     result["level"] = weapon_info['weapon']['level']
-    result["ascension"] = weapon_info['weapon']['promoteLevel']
+    result["ascension"] = weapon_info['weapon'].get('promoteLevel',False) if weapon_info['weapon'].get('promoteLevel',False) else 0
     result["refinement"] = list(weapon_info['weapon']['affixMap'].values())[0] + 1
     result["location"] = find_char(avatarInfoItem['avatarId'],char_bridge=char_bridge)
     result["lock"] = 'false'
@@ -107,43 +107,43 @@ def generate(uid):
         return f"error: {e}"
     if not (200 <= resp.status_code < 300):
         return f'error status code : response ended with {resp.status_code}'
-    try:
-        result = {}
-        result["format"] =  "GOOD"
-        result["dbVersion"] = 25
-        result["source"] = "Genshin Optimizer"
-        result["version"] = 1
-        characters = []
-        weapons = []
-        artifacts = []
-        for avatar in data['avatarInfoList']:
-            chars = char_maker(avatar, char_bridge)
-            weap = weapon_maker(avatar, weapon_bridge, char_bridge)
-            arti = artifacts_maker(avatar, artifacts_bridge, equip_bridge, stats_bridge, char_bridge)
-            characters.append(chars)
-            weapons.append(weap)
-            artifacts.extend(arti)
-        result['characters'] = characters
-        result['weapons'] = weapons
-        result['artifacts'] = artifacts
-        output_file = f'./outputs/{uid}.json'
-        with open(output_file,'w') as f:
-            json.dump(result,f)
-        return f'the output file is in location {os.path.abspath(output_file)}'
-    except Exception as e:
-        return 'something wrong with the code, please raise an issue' 
+    #try:
+    result = {}
+    result["format"] =  "GOOD"
+    result["dbVersion"] = 25
+    result["source"] = "Genshin Optimizer"
+    result["version"] = 1
+    characters = []
+    weapons = []
+    artifacts = []
+    for avatar in data['avatarInfoList']:
+        chars = char_maker(avatar, char_bridge)
+        weap = weapon_maker(avatar, weapon_bridge, char_bridge)
+        arti = artifacts_maker(avatar, artifacts_bridge, equip_bridge, stats_bridge, char_bridge)
+        characters.append(chars)
+        weapons.append(weap)
+        artifacts.extend(arti)
+    result['characters'] = characters
+    result['weapons'] = weapons
+    result['artifacts'] = artifacts
+    output_file = f'./outputs/{uid}.json'
+    with open(output_file,'w') as f:
+        json.dump(result,f)
+    return f'the output file is in location {os.path.abspath(output_file)}'
+    #except Exception as e:
+    #    return f'error with the code\n{e}' 
 
-
-if len(sys.argv) > 1:
-    try:
-        for arg in sys.argv[1:]:
-            if arg.strip() != "": 
-                number = str(arg)
-                res = generate(number)
-                print(res)
-        if all(arg.strip() == "" for arg in sys.argv[1:]): #check if all arguments are empty
-            print('No valid integer provided.')
-    except ValueError:
-        print('Invalid input: Please provide an integer.')
-else:
-    print('Usage: python filename.py integer_number')
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        try:
+            for arg in sys.argv[1:]:
+                if arg.strip() != "": 
+                    number = str(arg)
+                    res = generate(number)
+                    print(res)
+            if all(arg.strip() == "" for arg in sys.argv[1:]): #check if all arguments are empty
+                print('No valid integer provided.')
+        except ValueError:
+            print('Invalid input: Please provide an integer.')
+    else:
+        print('Usage: python filename.py integer_number')
