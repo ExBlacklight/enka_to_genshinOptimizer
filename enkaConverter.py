@@ -101,8 +101,7 @@ def generate(uid):
     with open('./sources/artifact_equips.json','r') as f:
         equip_bridge = json.load(f)
     with open('./sources/skill_orders.json','r') as f:
-        skill_orders = json.dump(f)
-
+        skill_orders = json.load(f)
     try:
         resp = requests.get(f'https://enka.network/api/uid/{uid}/')
         data = resp.json()
