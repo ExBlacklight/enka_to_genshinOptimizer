@@ -3,7 +3,7 @@ import json
 import sys
 import os
 
-def char_maker(avatarInfoItem, char_bridge):
+def char_maker(avatarInfoItem, char_bridge, skill_orders):
     def find_char(avatarId,char_bridge):
         for item,values in char_bridge.items():
             if type(values) is str:
@@ -17,14 +17,15 @@ def char_maker(avatarInfoItem, char_bridge):
     result['key'] = find_char(avatarInfoItem['avatarId'],char_bridge=char_bridge)
     result['level']= int(avatarInfoItem['propMap']['4001']['val'])
     result['ascension'] = int(avatarInfoItem['propMap']['1002']['val'])
-    talents = list(avatarInfoItem['skillLevelMap'].values())
+    talents = skill_orders[str(avatarInfoItem['avatarId'])]
     result['talent'] = {}
-    result['talent']['auto'] = talents[0]
-    result['talent']['skill'] = talents[1]
-    result['talent']['burst'] = talents[2]
+    result['talent']['auto'] = avatarInfoItem['skillLevelMap'][str(talents[0])]
+    result['talent']['skill'] = avatarInfoItem['skillLevelMap'][str(talents[1])]
+    result['talent']['burst'] = avatarInfoItem['skillLevelMap'][str(talents[2])]
     result['constellation'] = len(avatarInfoItem.get('talentIdList',[]))
     result['id'] = result['key']
     return result
+
 
 def weapon_maker(avatarInfoItem, weapon_bridge, char_bridge):
     def find_char(avatarId,char_bridge):
@@ -99,6 +100,8 @@ def generate(uid):
         stats_bridge = json.load(f)
     with open('./sources/artifact_equips.json','r') as f:
         equip_bridge = json.load(f)
+    with open('./sources/skill_orders.json','r') as f:
+        skill_orders = json.dump(f)
 
     try:
         resp = requests.get(f'https://enka.network/api/uid/{uid}/')
@@ -117,7 +120,7 @@ def generate(uid):
     weapons = []
     artifacts = []
     for avatar in data['avatarInfoList']:
-        chars = char_maker(avatar, char_bridge)
+        chars = char_maker(avatar, char_bridge, skill_orders)
         weap = weapon_maker(avatar, weapon_bridge, char_bridge)
         arti = artifacts_maker(avatar, artifacts_bridge, equip_bridge, stats_bridge, char_bridge)
         characters.append(chars)
