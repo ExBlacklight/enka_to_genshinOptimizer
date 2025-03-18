@@ -17,7 +17,7 @@ A Python utility that converts Genshin Impact character data from Enka.Network A
 1. Clone the repository:
 ```bash
 git clone https://github.com/ExBlacklight/enka_to_genshinOptimizer.git
-cd genshin-enka-converter
+cd enka_to_genshinOptimizer
 ```
 
 2. Install required packages:
